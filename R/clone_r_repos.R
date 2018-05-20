@@ -2,21 +2,69 @@
 ##                      CLONE R REPOS
 ##
 
+# Libs
+library(readr)
+library(magrittr)
+library(usethis)
+library(httr)
+library(jsonlite)
+library(glue)
+library(purrr)
+library(rvest)
+library(tibble)
+library(dplyr)
+
+# Homegrown
+source("R/utils/github_api_handlers.R")
+
 # Get trending R users
 git_api <- "https://api.github.com"
+git_url <- "https://github.com"
 
-trending_repo <- read_html("https://github.com/trending/r?since=monthly")
-trending_repo %<>%
-  html_nodes(., "h3") %>%
-  html_nodes(., "a") %>%
-  html_attr(., "href")
-
-trending_user <- read_html("https://github.com/trending/developers/r?since=monthly") 
-trending_user %<>%
+trending_user <- glue("{git_url}/trending/developers/r?since=monthly") %>%
+  read_html() %>%
   html_nodes(., "h2") %>%
   html_nodes(., "a") %>%
   html_attr(., "href") %>%
   gsub("/", "", .)
+
+# Currently dissected
+trending_user <- c("hadley", "r-lib", "tidyverse")
+
+# Have to page through to get all repos
+max_page <- glue("https://github.com/hadley?tab=repositories") %>%
+  read_html() %>%
+  html_nodes(".pagination") %>%
+  html_nodes("a") %>%
+  html_attr("href") %>%
+  stringr::str_extract("[[:digit:]]") %>%
+  max(.)
+
+# Get all R repos of user
+r_repo <- glue("https://github.com/hadley?page=1&tab=repositories") %>%
+  read_html() %>% 
+  # List items which contain meta data about repos
+  html_nodes("[itemprop=owns]") %>%
+  {
+    # Extract language
+    lang <- html_node(., "[itemprop=programmingLanguage]") %>%
+      html_text() %>%
+      trimws() %>% 
+      gsub("\\n", "", .)
+    
+    # Extract repo names
+    name <- html_nodes(., "h3") %>% 
+      html_nodes("a") %>% 
+      html_attr("href")
+    
+    # TODO: Extracts forks
+    fork <- html_node(r_repo, ".f6") %>%
+      html_node(., ".muted-link") %>%
+      html_attr("href")
+    
+    data_frame(name, lang, fork) %>%
+      dplyr::filter(lang == "R")
+  }
 
 # TODO: Get repos for each user
 # TODO: Extract those :user/:repo with language = R
