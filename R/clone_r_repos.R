@@ -22,7 +22,6 @@ source("R/utils/get_r_repos.R")
 # Get trending R users
 git_api <- "https://api.github.com"
 r_repos <- readRDS("data/r_repos.rds")
-first_repo <- r_repos[1]
 
 # Clone repo
 project_root <- getwd()
@@ -37,16 +36,31 @@ for (repo in r_repos) {
     system(glue("git clone https://github.com{repo}.git"),
            wait = TRUE)
     # Delete unnecessary files
-    all_files <- list.files(path = folder, recursive = TRUE, full.names = TRUE, 
-                            all.files = TRUE)
-    r_files <- list.files(path = folder, recursive = TRUE, all.files = TRUE,
-                         full.names = TRUE, pat = "\\.R$")
+    all_files <-
+      list.files(
+        path = folder,
+        recursive = TRUE,
+        full.names = TRUE,
+        all.files = TRUE
+      )
+    r_files <-
+      list.files(
+        path = folder,
+        recursive = TRUE,
+        all.files = TRUE,
+        full.names = TRUE,
+        pat = "\\.R$"
+      )
     unlink(setdiff(all_files, r_files))
     
     # Delete empty folders
-    non_empty_dirs <- 
-      list.files(path = folder, recursive = TRUE, full.names = TRUE, 
-                 all.files = TRUE) %>%
+    non_empty_dirs <-
+      list.files(
+        path = folder,
+        recursive = TRUE,
+        full.names = TRUE,
+        all.files = TRUE
+      ) %>%
       dirname() %>%
       unique()
     all_dirs <- list.dirs(folder) %>% setdiff(folder)
@@ -54,7 +68,7 @@ for (repo in r_repos) {
     unlink(empty_dirs, recursive = TRUE)
     
     # Wait
-    secs <- sample(1:10, 1)
+    secs <- 0
     cat("Sleep for", secs, "seconds ... -.- zZz \n")
     Sys.sleep(secs)
   } else {
