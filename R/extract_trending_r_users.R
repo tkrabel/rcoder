@@ -14,4 +14,4 @@ trending_user <- glue("{git_url}/trending/developers/r?since=monthly") %>%
   html_nodes(., "a") %>%
   html_attr(., "href") %>%
   gsub("/", "", .)
-saveRDS(trending_user, file = "data/trending_users.RDS")
+saveRDS(trending_user, file = "data/trending_users.rds")
