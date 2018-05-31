@@ -49,6 +49,7 @@ for (repo in r_repos) {
         recursive = TRUE,
         all.files = TRUE,
         full.names = TRUE,
+        ignore.case = TRUE,
         pat = "\\.R$"
       )
     unlink(setdiff(all_files, r_files))
@@ -68,7 +69,7 @@ for (repo in r_repos) {
     unlink(empty_dirs, recursive = TRUE)
     
     # Wait
-    secs <- 0
+    secs <- sample(0, 1, TRUE)
     cat("Sleep for", secs, "seconds ... -.- zZz \n")
     Sys.sleep(secs)
   } else {
@@ -77,3 +78,17 @@ for (repo in r_repos) {
 }
 
 setwd(project_root)
+
+# Delete all empty repos
+non_empty_dirs <-
+  list.files(
+    path = folder,
+    recursive = TRUE,
+    full.names = TRUE,
+    all.files = TRUE
+  ) %>%
+  dirname() %>%
+  unique()
+all_dirs <- list.dirs(folder) %>% setdiff(folder)
+empty_dirs <- all_dirs %>% setdiff(non_empty_dirs)
+unlink(empty_dirs, recursive = TRUE)
