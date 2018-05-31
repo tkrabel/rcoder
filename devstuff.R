@@ -12,7 +12,7 @@ library(purrr)
 library(rvest)
 
 # Homegrown
-source("code/utils/github_api_handlers.R")
+source("R/utils/github_api_handlers.R")
 
 # Set up git repo
 # pat <- read_file("~/.ssh/github_pat") %>% gsub("\\n", "", .)
