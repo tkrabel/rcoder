@@ -1,2 +1,4 @@
 r_scripts_text.rds
 r_scripts_text.txt
+training_data/*
+data_for_callback/*
