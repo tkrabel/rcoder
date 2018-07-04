@@ -79,16 +79,27 @@ for (repo in r_repos) {
 
 setwd(project_root)
 
+# Delete test files
+rm_dirs <- list.files(path = ".",
+                      recursive = TRUE,
+                      full.names = TRUE,
+                      all.files = TRUE,
+                      pat = "test")
+unlink(rm_dirs)
+
 # Delete all empty repos
 non_empty_dirs <-
   list.files(
-    path = folder,
+    path = clone_dir,
     recursive = TRUE,
     full.names = TRUE,
     all.files = TRUE
   ) %>%
   dirname() %>%
   unique()
-all_dirs <- list.dirs(folder) %>% setdiff(folder)
+all_dirs <- list.dirs(clone_dir) %>% setdiff(clone_dir)
 empty_dirs <- all_dirs %>% setdiff(non_empty_dirs)
 unlink(empty_dirs, recursive = TRUE)
+
+
+
