@@ -35,11 +35,11 @@ print_header <- function(run) {
 ## Initiate model ----
 model <- keras_model_sequential() %>%
   layer_lstm(input_shape = list(timesteps, vocab_size),
-             units = 256,
+             units = 128,
              activation = "tanh",
              dropout = 0.5,
              return_sequences = TRUE) %>%
-  layer_lstm(units = 256, dropout = 0.5) %>%
+  layer_lstm(units = 128, dropout = 0.5) %>%
   layer_dense(units = vocab_size,
               activation = "softmax")
 
